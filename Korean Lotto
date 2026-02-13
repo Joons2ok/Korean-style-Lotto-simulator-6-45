@@ -1,0 +1,181 @@
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+
+void Num_generator(int *num_arr); // 번호 생성
+int Num_generator_bonus(int* win_num); // 보너스 번호 생성
+void Sort_arr(int* arr); // 배열 오름차순 정렬
+void Copy_arr(int* in_arr, int* out_arr); // 배열 복사
+int Compare_arr(int* a, int* b); // 당첨번호 비교
+bool check_bonus(int* try_num, int bonus_num); // 보너스 검증
+
+int main(void) {
+	int temp;
+
+	int win_Num[6]; // 당첨 번호
+	int bonus_Num; // 보너스 번호
+	int try_Num[6]; // 도전할 번호
+
+	int rand_Num[6] = { 0 }; // 랜덤으로 만들어낼 번호
+
+	int attempts = 100000000; // 시도 횟수
+	int win_cnt[5] = { 0 }; // 1~5등의 당첨 횟수
+
+	srand(time(NULL));
+
+	// 당첨 번호 및 보너스 번호 생성
+	Num_generator(rand_Num);
+	Copy_arr(rand_Num, win_Num);
+	bonus_Num = Num_generator_bonus(win_Num);
+
+	// 랜덤 번호 와 당첨 번호를 정한 횟수만큼 비교
+	for (int i = 0; i < attempts; i++) {
+		Num_generator(rand_Num);
+		Copy_arr(rand_Num, try_Num);
+
+		switch (Compare_arr(win_Num, try_Num)) {
+			case 6:
+				win_cnt[0]++;
+				break;
+
+			case 5: // 5개 일치시 보너스 번호 검증으로 2, 3등 나눔
+				if (check_bonus(try_Num, bonus_Num) == true) {
+					win_cnt[1]++;
+				}
+					win_cnt[2]++;
+					break;
+
+			case 4:
+				win_cnt[3]++;
+				break;
+
+			case 3:
+				win_cnt[4]++;
+				break;
+		}
+	}
+	
+	///////// 터미널 출력 /////////
+	printf("******로또 시뮬레이션******\n\n");
+
+	// 당첨 번호와 반복 횟수 생성
+	printf("당첨 번호 : ");
+
+	for (int j = 0; j < 6; j++) {
+		printf("%d ", win_Num[j]);
+	}
+
+	printf(" +  %d\n", bonus_Num);
+	printf("반복 횟수 : %d번\n\n\n", attempts);
+
+	// 각 등수의 당첨 횟수와 확률 표시
+	for (int k = 0; k < 5; k++) {
+		printf("%d등 당첨 횟수 : %d\n", k + 1, win_cnt[k]);
+		printf("%d등 당첨 확률 : %f%%\n\n", k + 1, (double)win_cnt[k] / (double)attempts * 100);
+	}
+	return 0;
+}
+
+
+
+
+///////////함수 선언/////////////
+// 난수 발생 및 정렬 후 저장 함수
+void Num_generator(int *num_arr) {
+	int cnt = 0;
+	int temp;
+
+	for (int i = 0; i < 6; i++) {
+		*(num_arr + i) = 0;
+	}
+
+	while (cnt < 6) { 
+		temp = rand() % 45 + 1;
+		cnt++;
+
+		for (int j = 0; j < 6; j++) {
+			if (temp == *(num_arr + j)) {
+				cnt--;
+				break;
+			}
+
+			if (j == 5) {
+				*(num_arr + cnt - 1) = temp;
+			}
+		}
+	}
+	Sort_arr(num_arr);
+}
+
+// 보너스 번호 생성 함수
+int Num_generator_bonus(int* a) {
+	int temp;
+	temp = rand() % 45 + 1;
+
+	for (int i = 0; i < 6; i++) {
+		if (*(a + i) == temp) {
+			temp = rand() % 45 + 1;
+			i = -1;
+		}
+	}
+	return temp;
+}
+
+// 배열 정렬 함수
+void Sort_arr(int* arr) {
+	int temp;
+	int cnt = 0;
+
+	while (1) {
+		for (int i = 0; i < 5; i++) {
+			if (*(arr + i) > *(arr + i + 1)) {
+				temp = *(arr + i);
+				*(arr + i) = *(arr + i + 1);
+				*(arr + i + 1) = temp;
+
+				cnt += 1;
+			}
+		}
+		if (cnt == 0) {
+			break;
+		}
+		cnt = 0;
+	}
+}
+
+// 배열 복사 함수
+void Copy_arr(int* rand_arr, int* arr) {
+	for (int i = 0; i < 6; i++) {
+		*(arr + i) = *(rand_arr + i);
+	}
+}
+
+// 배열 비교 함수 (당첨 횟수에 따라 차등 반환값)
+int Compare_arr(int* a, int* b) {
+	int cnt = 0; // 일치하는 개수 카운팅
+
+	for (int i = 0; i < 6; i++) {
+		for (int j = 0; j < 6; j++) {
+			if (*(a + i) == *(b + j)) {
+				cnt++;
+				break;
+			}
+		}
+	}
+
+	// 일치하는 숫자가에 따른 반환(3개 이상 일치할시 발생)
+	if (cnt > 2 && cnt < 7) {
+		return cnt;
+	}
+	return 0;
+}
+
+// 5개 일치한 경우 보너스 번호 검증
+bool check_bonus(int* a, int b) {
+	for (int i = 0; i < 6; i++) {
+		if (*(a + i) == b) {
+			return true;
+		}
+	}
+	return false;
+}
