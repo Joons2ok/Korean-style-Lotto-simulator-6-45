@@ -1,0 +1,160 @@
+#include <stdio.h>
+#include <string.h>
+
+
+const char* strstr0(const char * str, const char * str_src);
+const char* strchr0(const char * str, int char_src);
+int strcspn0(const char * str, const char * reject);
+char* strcpy0(char * dest, const char * src);
+int strlen0(const char* str);
+char * strcat0(char * dest, const char * src);
+int strcmp0(const char* str1, const char* str2);
+char * strtok0(char * str, const char * delimiters);
+unsigned int atoi0(const char * str);
+
+
+
+int main() {
+	
+}
+
+
+
+const char* strstr0(const char* str, const char* str_src) {
+	const char* temp = str_src;
+	int cnt_addr = 0;
+
+	while (*str_src != '\0') {
+		cnt_addr++;
+		str_src++;
+	}
+
+	str_src = temp;
+	while (*str != '\0') {
+		if (*str == *str_src) {
+			str_src++;
+		}
+		else {
+			str_src = temp;
+		}
+		str++;
+
+		if (*str_src == '\0') {
+			return str - cnt_addr;
+		}
+		
+	}
+	return NULL;
+}
+
+const char* strchr0(const char* str, int char_src) {
+	while (*str != '\0') {
+		if (*str == (char)char_src) {
+			return str;
+		}
+		str++;
+	}
+	return NULL;
+}
+
+int strcspn0(const char* str, const char * reject) {
+	const char* temp = str;
+	int index = -1;
+	int cnt = 0;
+
+	while (*reject != '\0') {
+		for (int i = 0; *(str + i) != '\0'; i++) {
+			if (*(str + i) == *reject) {
+				if (index < i && index != -1) {
+					break;
+				}
+				index = i;
+				break;
+			}
+		}
+		reject++;
+	}
+	if (index == -1) {
+		while (*str != '\0') {
+			str++;
+		}
+		return (int)(str - 1 - temp);
+	}
+	return index;
+}
+
+char * strcpy0(char* dest, const char* src) {
+	char* out_addr = dest;
+	
+	while (*src != '\0') {
+		*dest++ = *src++;
+	}
+	*dest = '\0';
+	return out_addr;
+}
+
+int strlen0(const char* str) {
+	int cnt = 0;
+	while (*(str + cnt) != '\0') {
+		cnt++;
+	}
+	return cnt;
+}
+
+char * strcat0(char* dest, const char* src) {
+	char* out_addr;
+	out_addr = dest;
+
+	while (*dest != '\0') {
+		dest++;
+	}
+
+	while (*src != '\0') {
+		*dest++ = *src++;
+	}
+	*dest = '\0';
+	return out_addr;
+}
+
+int strcmp0(const char* str1, const char* str2) {
+	for (int i = 0; (*str1 == *str2) && (*str1 != '\0'); i++) {
+		str1++;
+		str2++;
+	}
+	return *str1 - *str2;
+}
+
+char* strtok0(char * str, const char * delimiters) {
+	static char * addr = str;
+	char* print_addr;
+
+	if (addr == NULL) {
+		return NULL;
+	}
+
+	print_addr = addr;
+
+	for (int i = 0; *addr != *delimiters; i++) {
+		if (*addr == '\0') {
+			addr = NULL;
+			return print_addr;
+		}
+		addr += 1;
+	}
+	*addr = '\0';
+	addr++;
+
+	return print_addr;
+}
+
+unsigned int atoi0(const char* str) {
+	int result = 0;
+
+	for (int i = 0; str[i] != '\0'; i++) {
+		result *= 10;
+		result += (str[i] - '0');
+	}
+
+	return result;
+}
+
