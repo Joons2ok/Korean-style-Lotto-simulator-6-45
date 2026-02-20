@@ -1,5 +1,7 @@
---kroean style lotto--
+--String_Functions(Custom)--
+>> 직접 만든 기본 문자열 함수
 
+--kroean style lotto--
 당첨자 선정 방법  
 > 6개의 당첨 번호 와 하나의 보너스 번호 중
 
